@@ -14,8 +14,7 @@ export class ChatComponent implements OnInit {
   public faPaperPlane = faPaperPlane;
 
   public user: any;
-  public initChat: boolean;
-
+  public initChat = false;
 
   constructor(private chatService: ChatService) {}
 
@@ -35,6 +34,10 @@ export class ChatComponent implements OnInit {
         return result
       });
     });
+  }
+
+  login() {
+    this.initChat = true;
   }
 
   create(chat: Chat) {

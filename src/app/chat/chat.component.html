@@ -8,28 +8,89 @@
 	<tbody>
 		<tr *ngFor="let chat of chats; let i = index">
 			<th scope="row">{{i + 1}}</th>
-			<td>{{chat.user}}</td>
+			<td>{{chat.user.email}}</td>
 			<td>{{chat.creationDate | date}}</td>
 			<td>{{chat.status}}</td>
 			<td>
-				<button class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
+				<button disabled class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
 			</td>
 		</tr>
 	</tbody>
 </table>
 
-<form *ngIf="initChat" class="form-signin">
+<form *ngIf="!initChat" class="form-signin">
 	<h1 class="h3 mb-3 font-weight-normal">Login</h1>
-	<input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
-	<input type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
-	<button (click)="login()" class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+	<input [(ngModel)]="email" [ngModelOptions]="standalone" type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
+	<input [(ngModel)]="password" [ngModelOptions]="standalone" type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+	<button (click)="login()" class="btn btn-lg btn-primary btn-block">Entrar</button>
 	<p class="mt-5 mb-3 text-muted">&copy; 2019</p>
 </form>
 
-<div *ngIf="!initChat" class="container chat">
-	<button type="button" class="close" aria-label="Fechar">
-  <span aria-hidden="true">&times;</span>
-  </button>
+<div *ngIf="initChat" class="container chat">
+	<button (click)="close()" type="button" class="close" aria-label="Fechar"><span>&times;</span></button>
+	<div class="conversas">
+
+		<div class="dia">
+      <h5 class="text-center">{{hoje | date}}</h5>
+			<hr>
+			<div class="row bloco">
+				<h4>Bot &bull;</h4>
+				<p>{{hoje | date: 'shortTime'}}</p>
+			</div>
+      <div class="row fala">
+        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      </div>
+		</div>
+
+    <div class="dia">
+      <h5 class="text-center">{{hoje | date}}</h5>
+			<hr>
+			<div class="row bloco">
+				<h4>Bot &bull;</h4>
+				<p>{{hoje | date: 'shortTime'}}</p>
+			</div>
+      <div class="row fala">
+        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      </div>
+		</div>
+    
+    <div class="dia">
+      <h5 class="text-center">{{hoje | date}}</h5>
+			<hr>
+			<div class="row bloco">
+				<h4>Bot &bull;</h4>
+				<p>{{hoje | date: 'shortTime'}}</p>
+			</div>
+      <div class="row fala">
+        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      </div>
+		</div>
+    
+    <div class="dia">
+      <h5 class="text-center">{{hoje | date}}</h5>
+			<hr>
+			<div class="row bloco">
+				<h4>Bot &bull;</h4>
+				<p>{{hoje | date: 'shortTime'}}</p>
+			</div>
+      <div class="row fala">
+        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      </div>
+		</div>
+    
+    <div class="dia">
+      <h5 class="text-center">{{hoje | date}}</h5>
+			<hr>
+			<div class="row bloco">
+				<h4>Bot &bull;</h4>
+				<p>{{hoje | date: 'shortTime'}}</p>
+			</div>
+      <div class="row fala">
+        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      </div>
+		</div>
+
+	</div>
 	<form class="escrever form-inline">
 		<div class="form-group">
 			<textarea class="form-control"></textarea>

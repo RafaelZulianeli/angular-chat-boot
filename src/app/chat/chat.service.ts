@@ -6,8 +6,8 @@ import { Chat } from "./chat.model";
 export class ChatService {
   constructor(private firestore: AngularFirestore) {}
 
-  getChats() {
-    return this.firestore.collection("chats").snapshotChanges();
+  getAll(base: string) {
+    return this.firestore.collection(base).snapshotChanges();
   }
 
   saveChat(chat: Chat) {
@@ -15,8 +15,9 @@ export class ChatService {
   }
 
   updateChat(chat: Chat) {
+    let id = chat.id;
     delete chat.id;
-    this.firestore.doc(`chats/${chat.id}`).update(chat);
+    this.firestore.doc(`chats/${id}`).update(chat);
   }
 
   remove(chatId: string) {

@@ -1,0 +1,26 @@
+p {
+  font-family: Lato;
+}
+
+.chat {
+  min-height: 600px;
+  background: #bf60ff;
+  border-radius: 5px;
+}
+
+.escrever {
+  position: relative;
+  top: 500px;
+  min-height: 50px;
+  background: #e9c9ff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.chat button {
+  margin-left: 11px;
+}
+
+.chat textarea {
+  width: 416px;
+}

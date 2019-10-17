@@ -4,7 +4,7 @@ p {
 
 .chat {
   min-height: 600px;
-  background: #e9c9ff;
+  background: #dcdcdc;
   border-radius: 5px;
 }
 
@@ -43,6 +43,7 @@ p {
 
 .bloco p {
   padding: 4px 6px;
+  color: #adadad;
 }
 
 .dia h5 {
@@ -51,5 +52,10 @@ p {
   left: 35%;
   margin: 0;
   top: 25px;
-  background: #e9c9ff;
+  background: #dcdcdc;
+}
+
+.fala {
+  position: relative;
+  bottom: 15px;
 }

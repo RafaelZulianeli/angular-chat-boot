@@ -12,7 +12,7 @@
 			<td>{{chat.creationDate | date}}</td>
 			<td>{{chat.status}}</td>
 			<td>
-				<button disabled class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
+				<button [disabled]="chat.status == 3" class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
 			</td>
 		</tr>
 	</tbody>
@@ -30,71 +30,39 @@
 	<button (click)="close()" type="button" class="close" aria-label="Fechar"><span>&times;</span></button>
 	<div class="conversas">
 
-		<div class="dia">
-      <h5 class="text-center">{{hoje | date}}</h5>
+		<div *ngFor="let oldChat of oldChats" class="dia">
+			<h5 class="text-center">{{oldChat.creationDate | date}}</h5>
 			<hr>
-			<div class="row bloco">
-				<h4>Bot &bull;</h4>
-				<p>{{hoje | date: 'shortTime'}}</p>
+			<div *ngFor="let chat of oldChat.conteudo">
+				<div class="row bloco">
+					<h4>{{chat.bot ? 'Bot' : 'Eu'}} &bull;</h4>
+					<p>{{getDateBySeconds(chat.time) | date: 'shortTime'}}</p>
+				</div>
+				<div class="row fala">
+					{{chat.dialogo}}
+				</div>
 			</div>
-      <div class="row fala">
-        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
-      </div>
 		</div>
 
-    <div class="dia">
-      <h5 class="text-center">{{hoje | date}}</h5>
+		<div class="dia atual">
+			<h5 class="text-center">{{hoje | date}}</h5>
 			<hr>
-			<div class="row bloco">
-				<h4>Bot &bull;</h4>
-				<p>{{hoje | date: 'shortTime'}}</p>
-			</div>
-      <div class="row fala">
-        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
-      </div>
-		</div>
-    
-    <div class="dia">
-      <h5 class="text-center">{{hoje | date}}</h5>
-			<hr>
-			<div class="row bloco">
-				<h4>Bot &bull;</h4>
-				<p>{{hoje | date: 'shortTime'}}</p>
-			</div>
-      <div class="row fala">
-        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
-      </div>
-		</div>
-    
-    <div class="dia">
-      <h5 class="text-center">{{hoje | date}}</h5>
-			<hr>
-			<div class="row bloco">
-				<h4>Bot &bull;</h4>
-				<p>{{hoje | date: 'shortTime'}}</p>
-			</div>
-      <div class="row fala">
-        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
-      </div>
-		</div>
-    
-    <div class="dia">
-      <h5 class="text-center">{{hoje | date}}</h5>
-			<hr>
-			<div class="row bloco">
-				<h4>Bot &bull;</h4>
-				<p>{{hoje | date: 'shortTime'}}</p>
-			</div>
-      <div class="row fala">
-        Oi {{logged.name}}, tudo certo? Em que posso lhe ajudar?
+      <div *ngFor="let x of conversaAtual">
+        <div class="row bloco">
+          <h4>{{x.bot ? 'Bot' : 'Eu'}} &bull;</h4>
+          <p>{{x.time | date: 'shortTime'}}</p>
+        </div>
+        <div class="row fala">
+          {{x.dialogo}}
+        </div>
       </div>
 		</div>
 
 	</div>
 	<form class="escrever form-inline">
 		<div class="form-group">
-			<textarea class="form-control"></textarea>
+			<textarea [(ngModel)]="message" [ngModelOptions]="standalone" class="form-control"></textarea>
 		</div>
-		<button class="btn btn-info"><fa-icon [icon]="faPaperPlane"></fa-icon></button>
+		<button (click)="pergunta()" class="btn btn-info"><fa-icon [icon]="faPaperPlane"></fa-icon></button>
 	</form>
 </div>

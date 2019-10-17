@@ -5,6 +5,8 @@ import { AngularFireModule } from "@angular/fire";
 import { AngularFireDatabaseModule } from "@angular/fire/database";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from "./app.component";
 import { HelloComponent } from "./hello.component";
@@ -17,6 +19,8 @@ import { ChatService } from "./chat/chat.service";
   imports: [
     BrowserModule,
     FormsModule,
+    HttpModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     FontAwesomeModule

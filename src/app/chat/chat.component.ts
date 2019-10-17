@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ChatService } from "./chat.service";
+import { map } from "rxjs/operators";
 import { Chat } from "./chat.model";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
@@ -119,25 +120,13 @@ export class ChatComponent implements OnInit {
         time: Date.now()
       };
 
-      if (data.metadata.length) {
+      let metadata = data.metadata[0];
+
+      if (metadata) {
         let arr = data.answer.split("_$");
-        model.dialogo = arr
-          .map((item, i) => {
-            if (i > 0) {
-              let variavel;
-              let metadata = data.metadata[i - 1].value.split(".");
-              metadata.forEach((meta, i) => {
-                if (!i) {
-                  variavel = this[meta];
-                  return;
-                }
-                variavel = variavel[meta];
-              });
-              return variavel + item;
-            }
-            return item;
-          })
-          .join("");
+        model.dialogo = metadata.name == "object"
+            ? this.mapMetadataObject(arr, metadata)
+            : this.mapMetadataFunction(arr, metadata);
       } else {
         model.dialogo = data.answer;
       }
@@ -148,15 +137,48 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  mapMetadataFunction(arr, metadata) {
+    this[metadata.value]().subscribe(res => {
+      arr.map((item, i)=> {
+        if(i){
+          let variavel
+        }
+        return item;
+      })
+    })
+  }
+
   get_saldo_vr() {
-    this.chatService.getVrByIdUser(this.logged.id).subscribe(data => {
-      this.saldoVR = data.map(e => {
-        return {
-          ...e.payload.doc.data()
-        };
-      })[0];
-      console.log("saldo", this.saldoVR);
-    });
+    return this.chatService.getVrByIdUser(this.logged.id).pipe(
+      map(data => {
+        console.log(data);
+        return data.map(e => {
+          return {
+            ...e.payload.doc.data()
+          };
+        })[0].value;
+      })
+    );
+  }
+
+  mapMetadataObject(arr, metadata) {
+    return arr
+      .map((item, i) => {
+        if (i) {
+          let variavel;
+          let objKeys = metadata.value.split(".");
+          objKeys.forEach((key, j) => {
+            if (!j) {
+              variavel = this[key];
+              return;
+            }
+            variavel = variavel[key];
+          });
+          return variavel + item;
+        }
+        return item;
+      })
+      .join("");
   }
 
   scroll() {

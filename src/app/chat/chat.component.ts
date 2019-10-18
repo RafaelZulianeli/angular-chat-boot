@@ -82,19 +82,19 @@ export class ChatComponent implements OnInit {
   // }
 
   login() {
-    let user = this.users.filter(item => item.email == this.email)[0];
-    if (!user || user.password != this.password) {
-      return alert("E-mail e/ou senha incorretos.");
-    }
+    // let user = this.users.filter(item => item.email == this.email)[0];
+    // if (!user || user.password != this.password) {
+    //   return alert("E-mail e/ou senha incorretos.");
+    // }
     this.initChat = !this.initChat;
-    console.log(user);
+    // console.log(user);
 
-    this.logged = user;
-    this.oldChats = this.chats.filter(item => item.user.id == user.id);
+    // this.logged = user;
+    // this.oldChats = this.chats.filter(item => item.user.id == user.id);
 
     this.hoje = Date.now();
-    // this.logged = this.users[1];
-    // this.oldChats = [this.chats[0]];
+    this.logged = this.users[1];
+    this.oldChats = this.chats;
 
     this.conversaAtual = [
       {
@@ -199,6 +199,7 @@ export class ChatComponent implements OnInit {
   scroll() {
     setTimeout(() => {
       let objScrDiv = document.querySelector(".chat .conversas");
+      // console.log(objScrDiv)
       objScrDiv.scrollTop = objScrDiv.scrollHeight;
     }, 0);
   }

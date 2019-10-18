@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ChatService } from "./chat.service";
 import { map } from "rxjs/operators";
+import { AngularFirestore } from "@angular/fire/firestore";
 import { Chat } from "./chat.model";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
@@ -29,8 +30,12 @@ export class ChatComponent implements OnInit {
 
   message;
   conversaAtual = [];
+  activeFunctions = [];
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private afs: AngularFirestore
+  ) {}
 
   ngOnInit() {
     this.chatService.getAll("chats").subscribe(data => {
@@ -40,7 +45,7 @@ export class ChatComponent implements OnInit {
           ...e.payload.doc.data()
         } as Chat;
 
-        result.creationDate = this.getDateBySeconds(result.creationDate);
+        result.creationDate = result.creationDate;
 
         return result;
       });
@@ -72,24 +77,24 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  getDateBySeconds(date) {
-    return new Date(date.seconds * 1000);
-  }
+  // getDateBySeconds(date) {
+  //   return new Date(date.seconds * 1000);
+  // }
 
   login() {
+    let user = this.users.filter(item => item.email == this.email)[0];
+    if (!user || user.password != this.password) {
+      return alert("E-mail e/ou senha incorretos.");
+    }
     this.initChat = !this.initChat;
-    // let user = this.users.filter(item => item.email == this.email)[0]
-    // if(!user.length || user[0].password != this.password){
-    //   return alert('E-mail e/ou senha incorretos.');
-    // }
-    // console.log(user)
+    console.log(user);
 
-    // this.logged = user;
-    // this.oldChats = this.chats.filter(item => item.user.id == user[0].id);
+    this.logged = user;
+    this.oldChats = this.chats.filter(item => item.user.id == user.id);
 
     this.hoje = Date.now();
-    this.logged = this.users[1];
-    this.oldChats = [this.chats[0]];
+    // this.logged = this.users[1];
+    // this.oldChats = [this.chats[0]];
 
     this.conversaAtual = [
       {
@@ -98,8 +103,6 @@ export class ChatComponent implements OnInit {
         time: Date.now()
       }
     ];
-
-    this.get_saldo_vr();
 
     this.scroll();
   }
@@ -124,34 +127,46 @@ export class ChatComponent implements OnInit {
 
       if (metadata) {
         let arr = data.answer.split("_$");
-        model.dialogo = metadata.name == "object"
-            ? this.mapMetadataObject(arr, metadata)
-            : this.mapMetadataFunction(arr, metadata);
+        if (metadata.name == "object") {
+          model.dialogo = this.mapMetadataObject(arr, metadata);
+          this.conversaAtual.push(model);
+        } else {
+          this.mapMetadataFunction(arr, metadata).subscribe(res => {
+            model.dialogo = res;
+            this.conversaAtual.push(model);
+          });
+        }
       } else {
         model.dialogo = data.answer;
+        this.conversaAtual.push(model);
       }
 
-      this.conversaAtual.push(model);
+      console.log("model", model);
       this.scroll();
       this.message = "";
     });
   }
 
   mapMetadataFunction(arr, metadata) {
-    this[metadata.value]().subscribe(res => {
-      arr.map((item, i)=> {
-        if(i){
-          let variavel
-        }
-        return item;
+    this.activeFunctions.push(metadata.value);
+    return this[metadata.value]().pipe(
+      map(res => {
+        console.log(res);
+        return arr
+          .map((item, i) => {
+            if (i) {
+              return res.toFixed(2) + item;
+            }
+            return item;
+          })
+          .join("");
       })
-    })
+    );
   }
 
   get_saldo_vr() {
     return this.chatService.getVrByIdUser(this.logged.id).pipe(
       map(data => {
-        console.log(data);
         return data.map(e => {
           return {
             ...e.payload.doc.data()
@@ -189,14 +204,31 @@ export class ChatComponent implements OnInit {
   }
 
   close() {
-    this.email = "";
-    this.password = "";
-    this.logged = null;
-    this.initChat = !this.initChat;
+    // let date = new Date().getTime()
+    let chat = {
+      conteudo: this.conversaAtual,
+      creationDate: Date.now(),
+      funcoes: this.activeFunctions,
+      // id: this.afs.createId(),
+      status: 1,
+      user: {
+        id: this.logged.id,
+        email: this.logged.email
+      }
+    };
+
+    this.create(chat).then(res => {
+      console.log(res);
+
+      this.email = "";
+      this.password = "";
+      this.logged = null;
+      this.initChat = !this.initChat;
+    });
   }
 
   create(chat: Chat) {
-    this.chatService.saveChat(chat);
+    return this.chatService.saveChat(chat);
   }
 
   update(chat: Chat) {

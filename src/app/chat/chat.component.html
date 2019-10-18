@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-dark">
+<table *ngIf="!initChat" class="table table-sm table-bordered table-dark">
 	<thead>
 		<th scope="col">#</th>
 		<th scope="col">Usuário</th>
@@ -36,7 +36,7 @@
 			<div *ngFor="let chat of oldChat.conteudo">
 				<div class="row bloco">
 					<h4>{{chat.bot ? 'Bot' : 'Eu'}} &bull;</h4>
-					<p>{{getDateBySeconds(chat.time) | date: 'shortTime'}}</p>
+					<p>{{chat.time | date: 'shortTime'}}</p>
 				</div>
 				<div class="row fala">
 					{{chat.dialogo}}

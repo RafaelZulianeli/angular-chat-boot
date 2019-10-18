@@ -3,7 +3,7 @@ p {
 }
 
 .chat {
-  min-height: 600px;
+  min-height: 800px;
   background: #dcdcdc;
   border-radius: 5px;
 }
@@ -34,7 +34,7 @@ p {
   padding: 20px;
   overflow: auto;
   height: auto;
-  max-height: 500px;
+  max-height: 700px;
 }
 
 ::-webkit-scrollbar {

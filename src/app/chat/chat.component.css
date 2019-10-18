@@ -3,7 +3,7 @@ p {
 }
 
 .chat {
-  min-height: 800px;
+  min-height: 100%;
   background: #dcdcdc;
   border-radius: 5px;
 }

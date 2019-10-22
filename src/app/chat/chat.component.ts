@@ -1,9 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { ChatService } from "./chat.service";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Chat } from "./chat.model";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faShare } from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: "chat-list",
@@ -15,6 +16,7 @@ export class ChatComponent implements OnInit {
 
   chats: Chat[];
   faPaperPlane = faPaperPlane;
+  faShare = faShare;
   initChat = false;
 
   users;
@@ -25,12 +27,19 @@ export class ChatComponent implements OnInit {
   logged;
   oldChats;
   hoje;
+  link;
 
   saldoVR;
 
   message;
   conversaAtual = [];
   activeFunctions = [];
+
+  private metadataType = {
+    ["function"]: "mapMetadataFunction",
+    ["object"]: "mapMetadataObject",
+    ["link"]: "mapMetadataLink"
+  };
 
   constructor(
     private chatService: ChatService,
@@ -46,9 +55,12 @@ export class ChatComponent implements OnInit {
         } as Chat;
 
         result.creationDate = result.creationDate;
+        // result.conteudo.sort((a, b) => b.time - a.time);
+        console.log(result);
 
         return result;
       });
+      this.chats.sort((a, b) => a.creationDate - b.creationDate);
       console.log("chats: ", this.chats);
     });
 
@@ -77,30 +89,29 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  // getDateBySeconds(date) {
-  //   return new Date(date.seconds * 1000);
-  // }
-
   login() {
-    // let user = this.users.filter(item => item.email == this.email)[0];
-    // if (!user || user.password != this.password) {
-    //   return alert("E-mail e/ou senha incorretos.");
-    // }
+    let user = this.users.filter(item => item.email == this.email)[0];
+    if (!user || user.password != this.password) {
+      return alert("E-mail e/ou senha incorretos.");
+    }
     this.initChat = !this.initChat;
-    // console.log(user);
+    console.log(user);
 
-    // this.logged = user;
-    // this.oldChats = this.chats.filter(item => item.user.id == user.id);
+    this.logged = user;
+    this.oldChats = this.chats.filter(item => item.user.id == user.id);
 
     this.hoje = Date.now();
-    this.logged = this.users[1];
-    this.oldChats = this.chats;
-
+    // this.logged = this.users[1];
+    // this.oldChats = this.chats;
+    let primeiraApresentacao = `Olá ${this.logged.name}! Eu sou o Hub. Estou aqui para te ajudar. Qual a sua dúvida?`;
+    let jaNosConhecemos = `Oi ${this.logged.name}! Fico feliz em vê-lo aqui novamente. Qual a sua dúvida?`
     this.conversaAtual = [
       {
         bot: true,
-        dialogo: `Oi ${this.logged.name}, tudo certo? Em que posso lhe ajudar?`,
-        time: Date.now()
+        dialogo: this.oldChats.length ? jaNosConhecemos : primeiraApresentacao,
+        time: Date.now(),
+        link: "",
+        prompts: []
       }
     ];
 
@@ -111,39 +122,78 @@ export class ChatComponent implements OnInit {
     this.conversaAtual.push({
       bot: false,
       dialogo: this.message,
-      time: Date.now()
+      time: Date.now(),
+      link: "",
+      prompts: []
     });
 
     this.chatService.getAnswers(this.message).subscribe(response => {
-      let data = response.answers[0];
 
+      console.log('response',response)
+
+      let data = response.answers[0];
       let model = {
         bot: true,
         dialogo: "",
-        time: Date.now()
+        time: Date.now(),
+        link: "",
+        prompts: data.context.prompts
       };
 
       let metadata = data.metadata[0];
-
       if (metadata) {
-        let arr = data.answer.split("_$");
-        if (metadata.name == "object") {
-          model.dialogo = this.mapMetadataObject(arr, metadata);
-          this.conversaAtual.push(model);
-        } else {
-          this.mapMetadataFunction(arr, metadata).subscribe(res => {
-            model.dialogo = res;
-            this.conversaAtual.push(model);
-          });
-        }
+        this.analisaMetada(data, metadata, model);
       } else {
         model.dialogo = data.answer;
         this.conversaAtual.push(model);
       }
 
-      console.log("model", model);
+      console.log("model: ", model);
       this.scroll();
       this.message = "";
+    });
+  }
+
+  analisaMetada(data, metadata, model) {
+    let arr = data.answer.split("_$");
+
+    this[this.metadataType[metadata.name]](arr, metadata).subscribe(res => {
+      model.dialogo = res;
+      model.link = this.link;
+      this.conversaAtual.push(model);
+    });
+  }
+
+  perguntaQnaId(item) {
+    this.conversaAtual.push({
+      bot: false,
+      dialogo: item.displayText,
+      time: Date.now(),
+      link: "",
+      prompts: []
+    });
+
+    this.chatService.getAnswersQnaId(item.qnaId).subscribe(response => {
+      console.log('responseQnaId',response)
+      let data = response.answers[0];
+      let model = {
+        bot: true,
+        dialogo: "",
+        time: Date.now(),
+        link: "",
+        prompts: data.context.prompts
+      };
+
+      let metadata = data.metadata[0];
+      if (metadata) {
+        this.analisaMetada(data, metadata, model);
+      } else {
+        model.dialogo = data.answer;
+        this.conversaAtual.push(model);
+      }
+
+      console.log("modelQna: ", model);
+      this.scroll();
     });
   }
 
@@ -177,23 +227,34 @@ export class ChatComponent implements OnInit {
   }
 
   mapMetadataObject(arr, metadata) {
-    return arr
-      .map((item, i) => {
-        if (i) {
-          let variavel;
-          let objKeys = metadata.value.split(".");
-          objKeys.forEach((key, j) => {
-            if (!j) {
-              variavel = this[key];
-              return;
+    return Observable.create(observer => {
+      observer.next(
+        arr
+          .map((item, i) => {
+            if (i) {
+              let variavel;
+              let objKeys = metadata.value.split(".");
+              objKeys.forEach((key, j) => {
+                if (!j) {
+                  variavel = this[key];
+                  return;
+                }
+                variavel = variavel[key];
+              });
+              return variavel + item;
             }
-            variavel = variavel[key];
-          });
-          return variavel + item;
-        }
-        return item;
-      })
-      .join("");
+            return item;
+          })
+          .join("")
+      );
+    });
+  }
+
+  mapMetadataLink(arr, metadata) {
+    return Observable.create(observer => {
+      this.link = metadata.value;
+      observer.next(arr.join(""));
+    });
   }
 
   scroll() {

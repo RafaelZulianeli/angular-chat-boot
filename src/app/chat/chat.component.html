@@ -40,6 +40,16 @@
 				</div>
 				<div class="row fala">
 					{{chat.dialogo}}
+          &nbsp;<a *ngIf="chat.link" [href]="'http://' + chat.link" target="blank">
+						<fa-icon [icon]="faShare"></fa-icon>
+          </a>
+
+          <div *ngIf="chat.prompts?.length" class="container option-chat">
+						<div *ngFor="let y of chat.prompts" class="row choice" (click)="perguntaQnaId(y)">
+							<p>{{y.displayText}}</p>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -47,15 +57,25 @@
 		<div class="dia atual">
 			<h5 class="text-center">{{hoje | date}}</h5>
 			<hr>
-      <div *ngFor="let x of conversaAtual">
-        <div class="row bloco">
-          <h4>{{x.bot ? 'Bot' : 'Eu'}} &bull;</h4>
-          <p>{{x.time | date: 'shortTime'}}</p>
-        </div>
-        <div class="row fala">
-          {{x.dialogo}}
-        </div>
-      </div>
+			<div *ngFor="let x of conversaAtual">
+				<div class="row bloco">
+					<h4>{{x.bot ? 'Bot' : 'Eu'}} &bull;</h4>
+					<p>{{x.time | date: 'shortTime'}}</p>
+				</div>
+				<div class="row fala">
+					{{x.dialogo}}
+					&nbsp;<a *ngIf="x.link" [href]="'http://' + x.link" target="blank">
+						<fa-icon [icon]="faShare"></fa-icon>
+					</a>
+
+					<div *ngIf="x.prompts.length" class="container option-chat">
+						<div *ngFor="let y of x.prompts" class="row choice" (click)="perguntaQnaId(y)">
+							<p>{{y.displayText}}</p>
+						</div>
+					</div>
+
+				</div>
+			</div>
 		</div>
 
 	</div>

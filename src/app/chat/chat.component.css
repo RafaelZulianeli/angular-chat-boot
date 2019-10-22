@@ -6,14 +6,17 @@ p {
   min-height: 750px;
   background: #dcdcdc;
   border-radius: 5px;
+  position: relative;
+  top: 1px;
 }
 
 .escrever {
-  bottom: 23px;
+  /* bottom: 23px; */
   position: absolute;
   min-height: 50px;
   border-radius: 5px;
   overflow: hidden;
+  top: 42rem;
 }
 
 .chat button {
@@ -58,4 +61,30 @@ p {
 .fala {
   position: relative;
   bottom: 15px;
+}
+
+.option-chat {
+  width: 75%;
+  text-align: center;
+  margin: 5px;
+}
+
+.choice {
+  cursor: pointer;
+  background-color: white;
+  color: #0063b1;
+  font-weight: bold;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e6e6e6;
+  padding: 5px;
+  width: 100%;
+  -ms-flex-line-pack: center;
+  align-content: center;
+}
+
+.choice p {
+  width: 18.5em;
+  word-wrap: break-word;
+  margin: 0;
 }

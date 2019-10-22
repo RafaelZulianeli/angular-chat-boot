@@ -6,14 +6,27 @@ import { Chat } from "./chat.model";
 
 @Injectable()
 export class ChatService {
-  constructor(private firestore: AngularFirestore, private http: HttpClient) {}
+  endPoint =
+    "https://angular-chat-boot.azurewebsites.net/qnamaker/knowledgebases/72f7a1d9-3e07-4e64-8837-68eee002239f/generateAnswer";
+  httpOptions;
+
+  constructor(private firestore: AngularFirestore, private http: HttpClient) {
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: "EndpointKey 2363e3f2-bc22-4fee-b5a9-84fe27ccb497",
+        ["Content-Type"]: "application/json"
+      })
+    };
+  }
 
   getAll(base: string) {
     return this.firestore.collection(base).snapshotChanges();
   }
 
-  getVrByIdUser(id){
-    return this.firestore.collection('vr', ref => ref.where('id_user', '==', id)).snapshotChanges()
+  getVrByIdUser(id) {
+    return this.firestore
+      .collection("vr", ref => ref.where("id_user", "==", id))
+      .snapshotChanges();
   }
 
   saveChat(chat: Chat) {
@@ -31,19 +44,18 @@ export class ChatService {
   }
 
   getAnswers(text) {
-    const endPoint = "https://angular-chat-boot.azurewebsites.net/qnamaker/knowledgebases/72f7a1d9-3e07-4e64-8837-68eee002239f/generateAnswer";
-    
-    let httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: 'EndpointKey 2363e3f2-bc22-4fee-b5a9-84fe27ccb497',
-        ['Content-Type']: 'application/json'
-      })
-    }
-
     let payload = {
-      question: text
-    }
+      question: text,
+      top: 5,
+      isTest: true,
+      scoreThreshold: 70,
+      context: { isContextOnly: false }
+    };
 
-    return this.http.post(`${endPoint}`, payload, httpOptions);
+    return this.http.post(this.endPoint, payload, this.httpOptions);
+  }
+
+  getAnswersQnaId(qnaId) {
+    return this.http.post(this.endPoint, { qnaId }, this.httpOptions);
   }
 }

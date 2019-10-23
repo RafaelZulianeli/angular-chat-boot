@@ -4,7 +4,11 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Chat } from "./chat.model";
-import { faPaperPlane, faShare, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaperPlane,
+  faShare,
+  faArrowLeft
+} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: "chat-list",
@@ -32,7 +36,7 @@ export class ChatComponent implements OnInit {
 
   saldoVR;
 
-  message = '';
+  message = "";
   conversaAtual = [];
   activeFunctions = [];
 
@@ -91,22 +95,26 @@ export class ChatComponent implements OnInit {
   }
 
   login() {
-    // let user = this.users.filter(item => item.email == this.email)[0];
-    // if (!user || user.password != this.password) {
-    //   return alert("E-mail e/ou senha incorretos.");
-    // }
+    let user = this.users.filter(item => item.email == this.email)[0];
+    if (!user || user.password != this.password) {
+      return alert("E-mail e/ou senha incorretos.");
+    }
     this.initChat = !this.initChat;
     // console.log(user);
 
-    // this.logged = user;
-    // this.oldChats = this.chats.filter(item => item.user.id == user.id);
+    this.logged = user;
+    this.oldChats = this.chats.filter(item => item.user.id == user.id);
 
     this.hoje = Date.now();
-    this.logged = this.users[1];
-    this.oldChats = this.chats;
+    // this.logged = this.users[1];
+    // this.oldChats = this.chats;
 
-    let primeiraApresentacao = `Olá ${this.logged.name}! Eu sou o Hub. Estou aqui para te ajudar. Qual a sua dúvida?`;
-    let jaNosConhecemos = `Oi ${this.logged.name}! Fico feliz em vê-lo aqui novamente. Qual a sua dúvida?`
+    let primeiraApresentacao = `Olá ${
+      this.logged.name
+    }! Eu sou o Hub. Estou aqui para te ajudar. Qual a sua dúvida?`;
+    let jaNosConhecemos = `Oi ${
+      this.logged.name
+    }! Fico feliz em vê-lo aqui novamente. Qual a sua dúvida?`;
     this.conversaAtual = [
       {
         bot: true,
@@ -121,8 +129,7 @@ export class ChatComponent implements OnInit {
   }
 
   pergunta() {
-
-    if(!this.message.trim()) return;
+    if (!this.message.trim()) return;
 
     this.conversaAtual.push({
       bot: false,
@@ -133,8 +140,21 @@ export class ChatComponent implements OnInit {
     });
 
     this.chatService.getAnswers(this.message).subscribe(response => {
+      console.log("response", response);
 
-      console.log('response',response)
+      if (response.answers[0].id == -1) {
+        this.conversaAtual.push({
+          bot: true,
+          dialogo:
+            "Desculpa no momento só consigo te ajudar com assuntos relacionados a benefícios de saúde.",
+          time: Date.now(),
+          link: "",
+          prompts: []
+        });
+        this.scroll();
+        this.message = "";
+        return;
+      }
 
       let data = response.answers[0];
       let model = {
@@ -179,7 +199,7 @@ export class ChatComponent implements OnInit {
     });
 
     this.chatService.getAnswersQnaId(item.qnaId).subscribe(response => {
-      console.log('responseQnaId',response)
+      console.log("responseQnaId", response);
       let data = response.answers[0];
       let model = {
         bot: true,

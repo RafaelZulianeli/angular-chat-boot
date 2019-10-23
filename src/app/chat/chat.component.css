@@ -12,7 +12,9 @@ p {
 }
 
 .escrever {
-  top: 2vh;
+  bottom: 2vh;
+  position: absolute;
+  max-width: 96vw;
 }
 
 .escrever button {
@@ -20,19 +22,35 @@ p {
   font-size: 1.4rem;
 }
 
-.close {
+.back {
   margin: 7px !important;
   position: absolute;
-  right: 17px;
-  top: -1px;
+  top: 2vh;
   cursor: pointer;
+  display: -webkit-inline-box;
+  height: 34px;
+  color: #fff;
+}
+
+.back .btn:focus {
+  box-shadow: none;
+}
+
+.back .btn {
+  color: #fff;
+}
+
+.back fa-icon {
+  position: relative;
+  font-size: 2rem;
+  bottom: 16px;
 }
 
 .conversas {
   padding: 20px;
   overflow: auto;
   height: auto;
-  max-height: 60vh;
+  max-height: 74vh;
 }
 
 ::-webkit-scrollbar {
@@ -42,6 +60,8 @@ p {
 .bloco p {
   padding: 4px 6px;
   color: #adadad;
+  position: relative;
+  bottom: 3px;
 }
 
 .dia h5 {
@@ -51,6 +71,11 @@ p {
   margin: 0;
   top: 25px;
   background: #dcdcdc;
+  font-size: 0.9rem;
+}
+
+.dia h4 {
+  font-size: 1.3rem;
 }
 
 .fala {

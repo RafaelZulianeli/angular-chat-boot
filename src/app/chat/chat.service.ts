@@ -46,9 +46,9 @@ export class ChatService {
   getAnswers(text) {
     let payload = {
       question: text,
-      top: 5,
-      isTest: true,
-      scoreThreshold: 70,
+      // top: 5,
+      // isTest: true,
+      // scoreThreshold: 70,
       context: { isContextOnly: false }
     };
 

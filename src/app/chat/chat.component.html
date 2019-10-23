@@ -1,33 +1,39 @@
-<table *ngIf="!initChat" class="table table-sm table-bordered table-dark">
-	<thead>
-		<th scope="col">#</th>
-		<th scope="col">Usuário</th>
-		<th scope="col">Data de criação</th>
-		<th scope="col">Status</th>
-	</thead>
-	<tbody>
-		<tr *ngFor="let chat of chats; let i = index">
-			<th scope="row">{{i + 1}}</th>
-			<td>{{chat.user.email}}</td>
-			<td>{{chat.creationDate | date}}</td>
-			<td>{{chat.status}}</td>
-			<td>
-				<button [disabled]="chat.status == 3" class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="container init">
+	<table *ngIf="!initChat" class="table table-sm table-bordered table-dark">
+		<thead>
+			<th scope="col">#</th>
+			<th scope="col">Usuário</th>
+			<th scope="col">Data de criação</th>
+			<th scope="col">Status</th>
+		</thead>
+		<tbody>
+			<tr *ngFor="let chat of chats; let i = index">
+				<th scope="row">{{i + 1}}</th>
+				<td>{{chat.user.email}}</td>
+				<td>{{chat.creationDate | date}}</td>
+				<td>{{chat.status}}</td>
+				<td>
+					<button [disabled]="chat.status == 3" class="btn btn-secondary btn-sm btn-block" (click)="delete(chat.id)">Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
-<form *ngIf="!initChat" class="form-signin">
-	<h1 class="h3 mb-3 font-weight-normal">Login</h1>
-	<input [(ngModel)]="email" [ngModelOptions]="standalone" type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
-	<input [(ngModel)]="password" [ngModelOptions]="standalone" type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
-	<button (click)="login()" class="btn btn-lg btn-primary btn-block">Entrar</button>
-	<p class="mt-5 mb-3 text-muted">&copy; 2019</p>
-</form>
+	<form *ngIf="!initChat" class="form-signin">
+		<h1 class="h3 mb-3 font-weight-normal">Login</h1>
+		<input [(ngModel)]="email" [ngModelOptions]="standalone" type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
+		<input [(ngModel)]="password" [ngModelOptions]="standalone" type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+		<button (click)="login()" class="btn btn-lg btn-primary btn-block">Entrar</button>
+		<p class="mt-5 mb-3 text-muted">&copy; 2019</p>
+	</form>
+</div>
 
-<div *ngIf="initChat" class="container chat">
-	<button (click)="close()" type="button" class="close" aria-label="Fechar"><span>&times;</span></button>
+<div *ngIf="initChat" class="close" (click)="close()">
+  <button type="button"><fa-icon [icon]="faArrowLeft"></fa-icon></button>
+  <span>VOLTAR</span>
+</div>
+
+<div *ngIf="initChat" class="chat">
 	<div class="conversas">
 
 		<div *ngFor="let oldChat of oldChats" class="dia">
@@ -40,11 +46,11 @@
 				</div>
 				<div class="row fala">
 					{{chat.dialogo}}
-          &nbsp;<a *ngIf="chat.link" [href]="'http://' + chat.link" target="blank">
+					&nbsp;<a *ngIf="chat.link" [href]="'http://' + chat.link" target="blank">
 						<fa-icon [icon]="faShare"></fa-icon>
-          </a>
+					</a>
 
-          <div *ngIf="chat.prompts?.length" class="container option-chat">
+					<div *ngIf="chat.prompts?.length" class="container option-chat">
 						<div *ngFor="let y of chat.prompts" class="row choice" (click)="perguntaQnaId(y)">
 							<p>{{y.displayText}}</p>
 						</div>
@@ -79,10 +85,15 @@
 		</div>
 
 	</div>
-	<form class="escrever form-inline">
-		<div class="form-group">
-			<textarea [(ngModel)]="message" [ngModelOptions]="standalone" class="form-control"></textarea>
-		</div>
-		<button (click)="pergunta()" class="btn btn-info"><fa-icon [icon]="faPaperPlane"></fa-icon></button>
-	</form>
+
+	<div class="escrever input-group">
+    <!-- <div class="input-group-prepend">
+      <span class="input-group-text">With textarea</span>
+    </div> -->
+    <textarea class="form-control" [(ngModel)]="message" [ngModelOptions]="standalone"></textarea>
+    <div class="input-group-append">
+		  <button class="btn btn-info" (click)="pergunta()" type="button"><fa-icon [icon]="faPaperPlane"></fa-icon></button>
+    </div>
+	</div>
+
 </div>

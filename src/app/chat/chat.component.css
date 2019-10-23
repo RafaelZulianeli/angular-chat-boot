@@ -3,41 +3,36 @@ p {
 }
 
 .chat {
-  min-height: 750px;
+  min-height: 90vh;
   background: #dcdcdc;
-  border-radius: 5px;
-  position: relative;
-  top: 1px;
+  position: absolute;
+  top: 10vh;
+  min-width: 100vmin;
+  padding: 2vw;
 }
 
 .escrever {
-  /* bottom: 23px; */
-  position: absolute;
-  min-height: 50px;
-  border-radius: 5px;
-  overflow: hidden;
-  top: 42rem;
+  top: 2vh;
 }
 
-.chat button {
-  margin-left: 11px;
-}
-
-.chat textarea {
-  width: 416px;
+.escrever button {
+  width: 17vw;
+  font-size: 1.4rem;
 }
 
 .close {
-  margin: 0 !important;
+  margin: 7px !important;
   position: absolute;
-  right: 40px;
+  right: 17px;
+  top: -1px;
+  cursor: pointer;
 }
 
 .conversas {
   padding: 20px;
   overflow: auto;
   height: auto;
-  max-height: 600px;
+  max-height: 60vh;
 }
 
 ::-webkit-scrollbar {
@@ -87,4 +82,8 @@ p {
   width: 18.5em;
   word-wrap: break-word;
   margin: 0;
+}
+
+.container.init {
+  width: 100vw;
 }

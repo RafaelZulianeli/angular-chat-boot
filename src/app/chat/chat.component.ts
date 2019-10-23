@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Chat } from "./chat.model";
-import { faPaperPlane, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faShare, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: "chat-list",
@@ -17,6 +17,7 @@ export class ChatComponent implements OnInit {
   chats: Chat[];
   faPaperPlane = faPaperPlane;
   faShare = faShare;
+  faArrowLeft = faArrowLeft;
   initChat = false;
 
   users;
@@ -31,7 +32,7 @@ export class ChatComponent implements OnInit {
 
   saldoVR;
 
-  message;
+  message = '';
   conversaAtual = [];
   activeFunctions = [];
 
@@ -90,19 +91,20 @@ export class ChatComponent implements OnInit {
   }
 
   login() {
-    let user = this.users.filter(item => item.email == this.email)[0];
-    if (!user || user.password != this.password) {
-      return alert("E-mail e/ou senha incorretos.");
-    }
+    // let user = this.users.filter(item => item.email == this.email)[0];
+    // if (!user || user.password != this.password) {
+    //   return alert("E-mail e/ou senha incorretos.");
+    // }
     this.initChat = !this.initChat;
-    console.log(user);
+    // console.log(user);
 
-    this.logged = user;
-    this.oldChats = this.chats.filter(item => item.user.id == user.id);
+    // this.logged = user;
+    // this.oldChats = this.chats.filter(item => item.user.id == user.id);
 
     this.hoje = Date.now();
-    // this.logged = this.users[1];
-    // this.oldChats = this.chats;
+    this.logged = this.users[1];
+    this.oldChats = this.chats;
+
     let primeiraApresentacao = `Olá ${this.logged.name}! Eu sou o Hub. Estou aqui para te ajudar. Qual a sua dúvida?`;
     let jaNosConhecemos = `Oi ${this.logged.name}! Fico feliz em vê-lo aqui novamente. Qual a sua dúvida?`
     this.conversaAtual = [
@@ -119,6 +121,9 @@ export class ChatComponent implements OnInit {
   }
 
   pergunta() {
+
+    if(!this.message.trim()) return;
+
     this.conversaAtual.push({
       bot: false,
       dialogo: this.message,

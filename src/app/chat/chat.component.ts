@@ -40,6 +40,8 @@ export class ChatComponent implements OnInit {
   conversaAtual = [];
   activeFunctions = [];
 
+  processando = false;
+
   private metadataType = {
     ["function"]: "mapMetadataFunction",
     ["object"]: "mapMetadataObject",
@@ -131,6 +133,8 @@ export class ChatComponent implements OnInit {
   pergunta() {
     if (!this.message.trim()) return;
 
+    this.processando = true;
+
     this.conversaAtual.push({
       bot: false,
       dialogo: this.message,
@@ -151,8 +155,7 @@ export class ChatComponent implements OnInit {
           link: "",
           prompts: []
         });
-        this.scroll();
-        this.message = "";
+        this.clean();
         return;
       }
 
@@ -174,9 +177,14 @@ export class ChatComponent implements OnInit {
       }
 
       console.log("model: ", model);
-      this.scroll();
-      this.message = "";
+      this.clean();
     });
+  }
+
+  clean(){
+    this.scroll();
+    this.message = "";
+    this.processando = false;
   }
 
   analisaMetada(data, metadata, model) {
